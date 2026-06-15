@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Biru</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+background:linear-gradient(to bottom,#081120,#0f1d35);
+color:white;
+overflow:hidden;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+}
+
+.container{
+max-width:700px;
+animation:fade .7s ease;
+}
+
+h1{
+margin-bottom:20px;
+font-size:2rem;
+}
+
+p{
+line-height:1.8;
+font-size:1.1rem;
+white-space:pre-line;
+}
+
+button{
+margin-top:30px;
+padding:14px 28px;
+border:none;
+border-radius:15px;
+background:#4d7cff;
+color:white;
+font-size:1rem;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.fade{
+animation:fade .7s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(15px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.polaroid{
+background:white;
+padding:12px;
+border-radius:4px;
+width:260px;
+margin:20px auto;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+.polaroid img{
+width:100%;
+display:block;
+}
+
+.polaroid p{
+color:black;
+margin-top:10px;
+font-size:.9rem;
+}
+
+#message{
+margin-top:25px;
+min-height:220px;
+}
+
+.cursor{
+border-right:2px solid white;
+animation:blink .8s infinite;
+}
+
+@keyframes blink{
+50%{
+border-color:transparent;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="app"></div>
+
+<audio id="music" loop>
+<source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+const app = document.getElementById("app");
+
+let clickSize = 1;
+
+const pages = [
+
+{
+text:"klik ini",
+button:"ni ha"
+},
+
+{
+text:"klik lagi.\n\nkau langsung klik.",
+button:"ni ha"
+},
+
+{
+text:"lagi lagi.\n\n.",
+button:"ni ha"
+},
+
+{
+text:"penasaran ko dek?.",
+button:"ni ha."
+},
+
+{
+text:"yaudah deh.\n\nsiap-siap dulu.",
+button:"ni ha."
+}
+
+];
+
+let current = 0;
+
+function renderPage(){
+
+const p = pages[current];
+
+app.innerHTML=`
+<div class="fade">
+<h1>${p.text.replace(/\n/g,"<br>")}</h1>
+<button id="nextBtn">${p.button}</button>
+</div>
+`;
+
+const btn=document.getElementById("nextBtn");
+
+btn.style.transform=`scale(${clickSize})`;
+
+btn.onclick=()=>{
+
+clickSize+=0.15;
+
+if(current<pages.length-1){
+current++;
+renderPage();
+}else{
+startLoading();
+}
+
+};
+
+}
+
+function startLoading(){
+
+app.innerHTML=`
+<div class="fade">
+<h1>loading hadiah...</h1>
+</div>
+`;
+
+let count=3;
+
+setTimeout(()=>{
+
+const interval=setInterval(()=>{
+
+app.innerHTML=`
+<div class="fade">
+<h1>${count}</h1>
+</div>
+`;
+
+count--;
+
+if(count<0){
+clearInterval(interval);
+showBirthday();
+}
+
+},1000);
+
+},1200);
+
+}
+
+function showBirthday(){
+
+document.getElementById("music").play().catch(()=>{});
+
+app.innerHTML=`
+<div class="fade">
+
+<h1>🎂 Selamat Ulang Tahun Biru 🎂</h1>
+
+<div class="polaroid">
+<img src="foto.jpg">
+<p>24 Juni ✨</p>
+</div>
+
+<div id="message"></div>
+
+</div>
+`;
+
+const texts=[
+
+"Jangan kebiasaan overthinking.",
+
+"Jangan telat makan juga, klise sih tapi aku ngingetin aja.",
+
+"Aku nggak tahu sampai kapan kita akan tetap saling mengenal.\n\nMungkin cepat,\nmungkin lambat.",
+
+"Tapi sebelum hari itu datang,\nada satu hal yang ingin kusampaikan.",
+
+"Kalau suatu saat nanti kamu bertemu seseorang yang bisa selalu ada untukmu,\nyang sayang banget sama kamu,\ntolong sayangi dia juga.",
+
+"Jangan ditahan karena gengsi.\n\nJangan dibiarkan bertanya sendirian apakah dirinya berarti untukmu atau tidak.",
+
+"Karena tidak semua orang yang datang dengan tulus akan datang dua kali.",
+
+"Aku senang pernah mengenalmu.",
+
+"I apologize for all my mistakes.",
+
+"Semoga hal-hal baik selalu menemukan jalannya menuju kamu.",
+
+"aku gabisa ngasi apa-apa maaf ya.\n\nmakasih karna pernah jadi bagian hidupku.\n\n— zyra 🤍"
+
+];
+
+typeMessages(texts);
+
+}
+
+async function typeMessages(arr){
+
+const box=document.getElementById("message");
+
+for(const text of arr){
+
+let div=document.createElement("p");
+box.appendChild(div);
+
+for(let i=0;i<=text.length;i++){
+
+div.innerHTML=text.substring(0,i)
+.replace(/\n/g,"<br>")+
+'<span class="cursor"></span>';
+
+await new Promise(r=>setTimeout(r,35));
+
+}
+
+div.innerHTML=text.replace(/\n/g,"<br>");
+
+await new Promise(r=>setTimeout(r,1200));
+
+}
+
+}
+
+renderPage();
+
+</script>
+
+</body>
+</html>
